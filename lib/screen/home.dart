@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
 class home extends StatefulWidget {
   // const home({Key? key}) : super(key: key);
@@ -11,18 +12,28 @@ class home extends StatefulWidget {
 }
 
 class _homeState extends State<home> {
-  String str = 'https://coderbyte.com/api/challenges/json/json-cleaning';
+  String url = 'https://coderbyte.com/api/challenges/json/json-cleaning';
 
-  var headers = {
-    ''
-  };
 
-  Future FetchJson()async{
-    var resp = await http.get(Uri.parse(str));
-    var resposne = jsonDecode(resp.body);
-    print(resposne);
-    // print(cleanResp(resposne));
-    print(cleanResp2(resposne));
+
+  Future fetchJson()async{
+    try{
+    http.get(Uri.parse(url)).then((response){
+      if (response.statusCode == 200) {
+        var resp = json.decode(response.body);
+        print(resp);
+        print(cleanResp2(resp));
+        // print(cleanResp(resp));
+      }
+      
+    }).catchError((e){
+      print("error");
+      print(e);
+    });
+  }
+  catch(e){
+    print(e);
+  }
   }
 
 
@@ -64,7 +75,8 @@ class _homeState extends State<home> {
   @override
   void initState() {
     super.initState();
-    FetchJson();
+    // FetchJson();
+    fetchJson();
   }
   @override
   Widget build(BuildContext context) {
